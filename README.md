@@ -1,6 +1,6 @@
 # Programing languages statistics scraper
 
-Rewrited to Kotlin Java tool which collects (scraps from web) statistics for programing languages for my site [jaki-jezyk-programowania.pl](https://jaki-jezyk-programowania.pl/).
+[Java tool](https://github.com/C0deboy/jjp-stats-scraper) rewrited to Kotlin which collects (scraps from web) statistics for programing languages for my site [jaki-jezyk-programowania.pl](https://jaki-jezyk-programowania.pl/).
 
 Currently, the tool is fetching data for each language from:
 - [Github](https://github.com/)
