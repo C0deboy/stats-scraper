@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <withJansi>true</withJansi>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%highlight(%-5level) - %-22msg %boldBlue(%mdc{collecting}) %red(%mdc{error}) %green(%mdc{status}) %yellow(%mdc{cause}) %n</Pattern>
+        </layout>
+    </appender>
+    <logger name="languageStatistics" level="INFO"/>
+
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
