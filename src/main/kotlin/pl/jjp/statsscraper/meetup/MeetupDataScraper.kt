@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListMap
 import kotlin.concurrent.getOrSet
 
-private const val url = "https://www.meetup.com/topics/"
+private const val url = "https://www.meetup.com/pl-PL/topics/"
 
 class MeetupDataScraper(private val languages: List<String>) : DataScraper {
 
@@ -64,7 +64,7 @@ class MeetupDataScraper(private val languages: List<String>) : DataScraper {
         val topic = customTopics.getOrDefault(language, language)
 
         val baseUrl = url + topic.toLowerCase()
-        val localUrl = "$baseUrl/?_locale=pl-PL"
+        val localUrl = baseUrl
         val globalUrl = "$baseUrl/global/"
 
         lateinit var languageData: MeetupData
