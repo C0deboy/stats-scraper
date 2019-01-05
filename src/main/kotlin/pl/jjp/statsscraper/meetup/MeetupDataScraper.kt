@@ -16,7 +16,7 @@ private const val url = "https://www.meetup.com/topics/"
 class MeetupDataScraper(private val languages: List<String>) : DataScraper {
 
     companion object {
-        internal val excluded = listOf("C")
+        internal val excluded = listOf("C++")
         const val NAME = "Meetup"
     }
 
@@ -45,7 +45,7 @@ class MeetupDataScraper(private val languages: List<String>) : DataScraper {
         resolveRankings(localRankingData) { language -> data[language]!!.local }
         resolveRankings(globalRankingData) { language -> data[language]!!.global }
 
-        data["C"] = data["C++"]!!//C and C++ are the same
+        data["C++"] = data["C"]!!//C and C++ are the same
 
         return data
     }
