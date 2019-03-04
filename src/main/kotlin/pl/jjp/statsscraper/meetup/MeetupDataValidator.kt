@@ -17,14 +17,14 @@ object MeetupDataValidator {
             val localRanking = languageData.local
 
 
-            validator.validateNumber(localRanking::meetups, 4)
-            validator.validateNumber(localRanking::members, 1400)
+            validator.validateNumber(localRanking::meetups, 2)
+            validator.validateNumber(localRanking::members, 500)
 //            validator.validateNumber(localRanking::ranking, 1)
 
             val globalRanking = languageData.global
 
-            validator.validateNumber(globalRanking::meetups, 150)
-            validator.validateNumber(globalRanking::members, 60000)
+            validator.validateNumber(globalRanking::meetups, 50)
+            validator.validateNumber(globalRanking::members, 25000)
 
             StatusLogger.logSuccessFor(language)
         } catch (e: Exception) {

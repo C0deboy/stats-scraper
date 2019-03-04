@@ -1,5 +1,7 @@
 package pl.jjp.statsscraper.common
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
 import com.beust.klaxon.JsonObject
 import pl.jjp.statsscraper.github.GithubData
 import pl.jjp.statsscraper.github.GithubDataScraper
@@ -17,6 +19,11 @@ import pl.jjp.statsscraper.tiobeindex.TiobeIndexData
 import pl.jjp.statsscraper.tiobeindex.TiobeIndexDataScraper
 import pl.jjp.statsscraper.tiobeindex.TiobeIndexDataValidator
 import pl.jjp.statsscraper.utils.StatusLogger
+import org.slf4j.LoggerFactory.getILoggerFactory
+import ch.qos.logback.classic.LoggerContext
+import org.slf4j.LoggerFactory
+import kotlin.math.log
+
 
 object CompleteStatisticsValidator {
 
@@ -24,6 +31,11 @@ object CompleteStatisticsValidator {
         if (mergedStatistics.size != languages.size + 1) {
             StatusLogger.logError("Missing language or data.")
         }
+
+        val lc = LoggerFactory.getILoggerFactory() as LoggerContext
+        val logger = lc.getLogger(StatusLogger.LOG.name)
+        logger.level = Level.WARN
+
         for (language in mergedStatistics.keys) {
 
             if (language == "date") {
@@ -46,42 +58,45 @@ object CompleteStatisticsValidator {
 
                 val maxRank = languages.size;
 
-                when {
-                    scrapers.any { it is GithubDataScraper } -> {
-                        val githubData = languageData[GithubDataScraper.NAME] as GithubData
+                scrapers.forEach {
+                    when(it) {
 
-                        validator.validateNumber(githubData::ranking, 1, maxRank)
+                        is GithubDataScraper -> {
+                            val githubData = languageData[GithubDataScraper.NAME] as GithubData
 
-                        GithubDataValidator.validate(language, githubData)
-                    }
+                            validator.validateNumber(githubData::ranking, 1, maxRank)
 
-                    scrapers.any { it is StackOverflowDataScraper } -> {
-                        val stackOverflowData = languageData[StackOverflowDataScraper.NAME] as StackOverflowData
+                            GithubDataValidator.validate(language, githubData)
+                        }
 
-                        validator.validateNumber(stackOverflowData::ranking, 1, maxRank)
+                        is StackOverflowDataScraper -> {
+                            val stackOverflowData = languageData[StackOverflowDataScraper.NAME] as StackOverflowData
 
-                        StackOverFlowDataValidator.validate(language, stackOverflowData)
-                    }
+                            validator.validateNumber(stackOverflowData::ranking, 1, maxRank)
 
-                    scrapers.any { it is MeetupDataScraper } && !MeetupDataScraper.excluded.contains(language) -> {
-                        val meetupData = languageData[MeetupDataScraper.NAME] as MeetupData
+                            StackOverFlowDataValidator.validate(language, stackOverflowData)
+                        }
 
-                        validator.validateNumber(meetupData.local::ranking, 1, maxRank)
-                        validator.validateNumber(meetupData.global::ranking, 1, maxRank)
+                        is MeetupDataScraper -> {
+                            val meetupData = languageData[MeetupDataScraper.NAME] as MeetupData
 
-                        MeetupDataValidator.validate(language, meetupData);
-                    }
+                            validator.validateNumber(meetupData.local::ranking, 1, maxRank)
+                            validator.validateNumber(meetupData.global::ranking, 1, maxRank)
 
-                    scrapers.any { it is SpectrumDataScraper } -> {
-                        val spectrumData = languageData[MeetupDataScraper.NAME] as SpectrumData
+                            MeetupDataValidator.validate(language, meetupData);
+                        }
 
-                        SpectrumDataValidator.validate(language, spectrumData);
-                    }
+                        is SpectrumDataScraper -> {
+                            val spectrumData = languageData[SpectrumDataScraper.NAME] as SpectrumData
 
-                    scrapers.any { it is TiobeIndexDataScraper } -> {
-                        val tiobeIndexData = languageData[MeetupDataScraper.NAME] as TiobeIndexData
+                            SpectrumDataValidator.validate(language, spectrumData);
+                        }
 
-                        TiobeIndexDataValidator.validate(language, tiobeIndexData);
+                        is TiobeIndexDataScraper -> {
+                            val tiobeIndexData = languageData[TiobeIndexDataScraper.NAME] as TiobeIndexData
+
+                            TiobeIndexDataValidator.validate(language, tiobeIndexData);
+                        }
                     }
                 }
 
@@ -93,5 +108,7 @@ object CompleteStatisticsValidator {
         StatusLogger.gap()
         StatusLogger.logSuccessFor("Complete validation")
         StatusLogger.gap()
+
+        logger.level = Level.INFO
     }
 }

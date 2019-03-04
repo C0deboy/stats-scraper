@@ -10,8 +10,8 @@ object GithubDataValidator {
             validateTop10Projects(language, languageData)
 
             val validator = DataValidator(language)
-            validator.validateNumber(languageData::projects, 30000)
-            validator.validateNumber(languageData::moreThen1000Stars, 15)
+            validator.validateNumber(languageData::projects, 2000)
+            validator.validateNumber(languageData::moreThen1000Stars, 10)
 
             StatusLogger.logSuccessFor(language)
         } catch (e: Exception) {
@@ -27,7 +27,7 @@ object GithubDataValidator {
 
             validator.validateUrl(projectData::url)
             validator.validateNotBlank(projectData::name)
-            validator.validateNumber(projectData::stars, 1500)
+            validator.validateNumber(projectData::stars, 1000)
         }
 
         if (languageData.top10.size != 10) {

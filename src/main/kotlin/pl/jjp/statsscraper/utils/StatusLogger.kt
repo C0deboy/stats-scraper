@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 
 object StatusLogger {
-    private val LOG = LoggerFactory.getLogger("Progress logger")
+    val LOG = LoggerFactory.getLogger("Progress logger")
 
     fun logInfo(message: String) {
         LOG.info(message)

@@ -9,7 +9,6 @@
             <Pattern>%highlight(%-5level) - %-22msg %boldBlue(%mdc{collecting}) %red(%mdc{error}) %green(%mdc{status}) %yellow(%mdc{cause}) %n</Pattern>
         </layout>
     </appender>
-    <logger name="languageStatistics" level="INFO"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

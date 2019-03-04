@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.system.measureNanoTime
 
 private val languages =
-    listOf("C", "C++", "Java", "JavaScript", "Python", "Swift", "R", "Csharp", "Ruby", "PHP")
+    listOf("C", "C++", "Java", "JavaScript", "Python", "Swift", "R", "Csharp", "Ruby", "PHP", "Kotlin", "Scala", "Go", "Groovy", "Rust")
 
 private val scrapers = HashSet<DataScraper>()
 

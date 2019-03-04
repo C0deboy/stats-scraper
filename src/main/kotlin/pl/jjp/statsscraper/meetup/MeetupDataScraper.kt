@@ -33,6 +33,7 @@ class MeetupDataScraper(private val languages: List<String>) : DataScraper {
     init {
         customTopics["R"] = "programming-in-r"
         customTopics["Swift"] = "swift-language"
+        customTopics["Go"] = "go-programming-language"
     }
 
     override fun scrapData(): Map<String, MeetupData> {

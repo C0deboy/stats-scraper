@@ -9,7 +9,7 @@ object StackOverFlowDataValidator {
 
         try {
             val validator = DataValidator(language)
-            validator.validateNumber(languageData::questions, 185000)
+            validator.validateNumber(languageData::questions, 10000)
 
             StatusLogger.logSuccessFor(language)
         } catch (e: Exception) {

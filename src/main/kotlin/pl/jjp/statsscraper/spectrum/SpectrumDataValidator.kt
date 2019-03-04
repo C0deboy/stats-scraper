@@ -9,8 +9,13 @@ object SpectrumDataValidator {
 
         try {
             val validator = DataValidator(language)
-            validator.validateNumber(languageData::currentPosition, 1, 20)
-            validator.validateNumber(languageData::lastYearPosition, 1, 20)
+
+            if (languageData.currentPosition != "N/A")
+                validator.validateNumber(languageData::currentPosition, 1, 40)
+
+            if (languageData.lastYearPosition != "N/A")
+                validator.validateNumber(languageData::lastYearPosition, 1, 40)
+
 
             StatusLogger.logSuccessFor(language)
         } catch (e: Exception) {

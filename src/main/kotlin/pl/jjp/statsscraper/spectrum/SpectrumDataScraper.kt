@@ -48,6 +48,9 @@ class SpectrumDataScraper(private val languages: List<String>) : DataScraper {
                 }
             }
 
+            data["Kotlin"] = SpectrumData("N/A", "N/A");
+            data["Groovy"] = SpectrumData("N/A", "N/A");
+
         } catch (e: Exception) {
             StatusLogger.logException(language, e)
         }
