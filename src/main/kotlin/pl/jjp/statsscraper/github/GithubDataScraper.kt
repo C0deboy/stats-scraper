@@ -106,7 +106,7 @@ class GithubDataScraper(private val languages: List<String>) : DataScraper {
         for (projectJSON in top10List!!) {
 
             val projectName = projectJSON.string("name")
-            val projectStars = String.format("%,d", projectJSON.int("watchers_count"))
+            val projectStars = String.format("%,d", projectJSON.int("stargazers_count"))
             val projectUrl = projectJSON.string("html_url")
 
             val projectData = GithubProject(

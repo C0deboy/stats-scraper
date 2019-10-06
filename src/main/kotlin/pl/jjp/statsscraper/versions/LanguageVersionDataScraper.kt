@@ -16,6 +16,7 @@ import java.util.regex.Pattern
 const val WIKI_INFOBOX = "table.infobox tr"
 const val VERSION_HEADER = "Stable release"
 const val INDEX_OF_JAVA_TD_AT_PL_WIKI = 7
+const val INDEX_OF_R_TD = 7
 
 class LanguageVersionDataScraper(val languages: List<String>) : DataScraper {
 
@@ -62,8 +63,9 @@ class LanguageVersionDataScraper(val languages: List<String>) : DataScraper {
 
             var index = th.indexOf(VERSION_HEADER)
 
-            if (language == "Java") {
-                index = INDEX_OF_JAVA_TD_AT_PL_WIKI
+            when (language) {
+                "Java" -> index = INDEX_OF_JAVA_TD_AT_PL_WIKI
+                "R" -> index += 1 // additional image row
             }
 
             val latestReleaseInfo = td[index]
@@ -95,8 +97,8 @@ class LanguageVersionDataScraper(val languages: List<String>) : DataScraper {
         } else {
             try {
                 version =
-                        latestReleaseInfo.split(" /".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0].trim { it <= ' ' }
-                            .replace("\\[.*]".toRegex(), "")
+                    latestReleaseInfo.split(" /".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0].trim { it <= ' ' }
+                        .replace("\\[.*]".toRegex(), "")
                 StatusLogger.appendWarning("Not plain version, using: $version")
             } catch (e: ArrayIndexOutOfBoundsException) {
                 StatusLogger.logError("Cannot retrieve version from release info.")

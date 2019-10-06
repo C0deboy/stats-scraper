@@ -12,7 +12,7 @@ object TiobeIndexDataValidator {
             validator.validateNumber(languageData::currentPosition, 1, 50)
 
             if (languageData.lastYearPosition != "N/A")
-            validator.validateNumber(languageData::lastYearPosition, 1, 50)
+            validator.validateNumber(languageData::lastYearPosition, 1, 100)
 
             StatusLogger.logSuccessFor(language)
         } catch (e: Exception) {

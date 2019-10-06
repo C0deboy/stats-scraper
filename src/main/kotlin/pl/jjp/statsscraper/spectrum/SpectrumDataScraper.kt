@@ -6,8 +6,8 @@ import pl.jjp.statsscraper.common.DataScraper
 import pl.jjp.statsscraper.utils.StatusLogger
 import pl.jjp.statsscraper.utils.escapeLanguage
 
-private const val LAST_YEAR_RANKING_FILE = "/spectrumRanking2017.html"
-private const val CURRENT_RANKING_FILE = "/spectrumRanking2018.html"
+private const val LAST_YEAR_RANKING_FILE = "/spectrumRanking2018.html"
+private const val CURRENT_RANKING_FILE = "/spectrumRanking2019.html"
 private const val RANK_DATA_LANGUAGE = ".language"
 
 class SpectrumDataScraper(private val languages: List<String>) : DataScraper {
@@ -30,26 +30,24 @@ class SpectrumDataScraper(private val languages: List<String>) : DataScraper {
             val lastYearSpectrumRanking = getSpectrumRanking(LAST_YEAR_RANKING_FILE)
 
 
-            currentSpectrumRanking.forEachIndexed { index, lang ->
+            languages.forEachIndexed { index, lang ->
                 language = lang
 
-                if (languages.contains(language)) {
+                if (currentSpectrumRanking.find{ it.contains(language)} != null) {
 
                     val currentPosition = index + 1
-                    val lastYearPosition = lastYearSpectrumRanking.indexOf(language) + 1
+                    val find = lastYearSpectrumRanking.find { it.contains(language) }
+                    val lastYearPosition = if (find != null) lastYearSpectrumRanking.indexOf(find) + 1 else 0
 
                     val languageData = SpectrumData(
                         currentPosition = currentPosition.toString(),
-                        lastYearPosition = lastYearPosition.toString()
+                        lastYearPosition = if (lastYearPosition > 0) lastYearPosition.toString() else "N/A"
                     )
 
                     SpectrumDataValidator.validate(language, languageData)
                     data[language] = languageData
                 }
             }
-
-            data["Kotlin"] = SpectrumData("N/A", "N/A");
-            data["Groovy"] = SpectrumData("N/A", "N/A");
 
         } catch (e: Exception) {
             StatusLogger.logException(language, e)
