@@ -81,7 +81,7 @@ object GithubDataScraper : DataScraper {
         val escapedLanguage = language.replace("+", "%2B")
         val url = URL.replace("{language}", escapedLanguage)
 
-        val doc = Jsoup.connect(url).header("Authorization", authToken).ignoreContentType(true).execute().body()
+        val doc = getPageBodyAsString(url)
 
         return Klaxon().parseJsonObject(StringReader(doc))
     }
@@ -112,7 +112,7 @@ object GithubDataScraper : DataScraper {
 
             top10.add(projectData)
         }
-
+        top10.sortByDescending { project -> project.stars }
         return top10
     }
 
@@ -125,18 +125,26 @@ object GithubDataScraper : DataScraper {
     private fun fetchMoreThan1000StarsData(language: String): String {
         val escapedLanguage = language.replace("+", "%2B")
         val urlStars = STARS_URL.replace("{language}", escapedLanguage)
-        return Jsoup.connect(urlStars).header("Authorization", authToken).ignoreContentType(true).execute().body()
+        return getPageBodyAsString(urlStars)
     }
 
     private fun checkGithubApiLimits() {
         val url = "https://api.github.com/rate_limit"
 
         try {
-            val doc = Jsoup.connect(url).header("Authorization", authToken).ignoreContentType(true).execute().body()
+            val doc = getPageBodyAsString(url)
             StatusLogger.logInfo(doc)
         } catch (e: IOException) {
             StatusLogger.logException("Checking api limits", e)
         }
+    }
 
+    private fun getPageBodyAsString(url: String): String {
+        Thread.sleep(1000)
+        return Jsoup.connect(url)
+            .header("Authorization", authToken)
+            .ignoreContentType(true)
+            .execute()
+            .body()
     }
 }
