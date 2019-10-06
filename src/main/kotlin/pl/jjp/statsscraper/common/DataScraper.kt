@@ -4,6 +4,5 @@ interface DataScraper {
 
     val name: String
 
-    fun scrapData(): Map<String, Data>
-
+    fun scrapData(languages: List<String>): Map<String, Data>
 }

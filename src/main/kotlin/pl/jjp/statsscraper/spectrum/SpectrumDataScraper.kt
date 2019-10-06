@@ -10,30 +10,23 @@ private const val LAST_YEAR_RANKING_FILE = "/spectrumRanking2018.html"
 private const val CURRENT_RANKING_FILE = "/spectrumRanking2019.html"
 private const val RANK_DATA_LANGUAGE = ".language"
 
-class SpectrumDataScraper(private val languages: List<String>) : DataScraper {
+object SpectrumDataScraper : DataScraper {
 
-    companion object {
-        const val NAME = "SpectrumRanking"
-    }
-
-    override val name get() = NAME
-
+    override val name = "SpectrumRanking"
     val data = HashMap<String, SpectrumData>()
 
-    override fun scrapData(): Map<String, Data> {
+    override fun scrapData(languages: List<String>): Map<String, Data> {
         StatusLogger.logCollecting("Spectrum ranking data")
 
         var language = "NONE"
         try {
-
             val currentSpectrumRanking = getSpectrumRanking(CURRENT_RANKING_FILE)
             val lastYearSpectrumRanking = getSpectrumRanking(LAST_YEAR_RANKING_FILE)
-
 
             languages.forEachIndexed { index, lang ->
                 language = lang
 
-                if (currentSpectrumRanking.find{ it.contains(language)} != null) {
+                if (currentSpectrumRanking.find { it.contains(language) } != null) {
 
                     val currentPosition = index + 1
                     val find = lastYearSpectrumRanking.find { it.contains(language) }
@@ -52,9 +45,7 @@ class SpectrumDataScraper(private val languages: List<String>) : DataScraper {
         } catch (e: Exception) {
             StatusLogger.logException(language, e)
         }
-
         return data
-
     }
 
     private fun getSpectrumRanking(rankingDataPath: String): MutableList<String> {

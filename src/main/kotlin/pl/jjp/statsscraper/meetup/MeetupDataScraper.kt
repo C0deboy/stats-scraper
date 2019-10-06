@@ -11,23 +11,17 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListMap
 import kotlin.concurrent.getOrSet
 
-private const val url = "https://www.meetup.com/pl-PL/topics/"
+object MeetupDataScraper : DataScraper {
 
-class MeetupDataScraper(private val languages: List<String>) : DataScraper {
+    const val url = "https://www.meetup.com/pl-PL/topics/"
+    override val name = "Meetup"
+    val excluded = listOf("C++")
 
-    companion object {
-        internal val excluded = listOf("C++")
-        const val NAME = "Meetup"
-    }
-
-    override val name get() = NAME
     private val data = ConcurrentHashMap<String, MeetupData>()
-
     private var localRankingData = ConcurrentSkipListMap<Int, String>()
     private var globalRankingData = ConcurrentSkipListMap<Int, String>()
 
     private val retries = ThreadLocal<Int>()
-
     private val customTopics = HashMap<String, String>()
 
     init {
@@ -36,8 +30,8 @@ class MeetupDataScraper(private val languages: List<String>) : DataScraper {
         customTopics["Go"] = "go-programming-language"
     }
 
-    override fun scrapData(): Map<String, MeetupData> {
-        StatusLogger.logCollecting("meetup data")
+    override fun scrapData(languages: List<String>): Map<String, MeetupData> {
+        StatusLogger.logCollecting("Meetup data")
 
         languages.stream().parallel()
             .filter(this::filterExcluded)
@@ -64,9 +58,8 @@ class MeetupDataScraper(private val languages: List<String>) : DataScraper {
 
         val topic = customTopics.getOrDefault(language, language)
 
-        val baseUrl = url + topic.toLowerCase()
-        val localUrl = baseUrl
-        val globalUrl = "$baseUrl/global/"
+        val localUrl = url + topic.toLowerCase()
+        val globalUrl = "$localUrl/global/"
 
         lateinit var languageData: MeetupData
 

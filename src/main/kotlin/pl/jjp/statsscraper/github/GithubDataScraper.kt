@@ -12,21 +12,16 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListMap
 
+
 private const val URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>0&s=stars&per_page=10"
 private const val STARS_URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>1000&per_page=1"
 
-class GithubDataScraper(private val languages: List<String>) : DataScraper {
+object GithubDataScraper : DataScraper {
 
-    companion object {
-        const val NAME = "Github"
-    }
-
-    override val name get() = NAME
+    override val name = "Github"
 
     val data = ConcurrentHashMap<String, GithubData>()
-
     private val rankingData = ConcurrentSkipListMap<Int, String>()
-
     private var authToken: String? = null
 
     init {
@@ -37,10 +32,10 @@ class GithubDataScraper(private val languages: List<String>) : DataScraper {
         } catch (e: IOException) {
             StatusLogger.logException("Cannot load properties", e)
         }
-
     }
 
-    override fun scrapData(): Map<String, GithubData> {
+    override fun scrapData(languages: List<String>): Map<String, GithubData> {
+
         StatusLogger.logCollecting("Github data")
 
         if (authToken == null || StringUtils.isBlank(authToken)) {
@@ -82,7 +77,7 @@ class GithubDataScraper(private val languages: List<String>) : DataScraper {
         return languageData
     }
 
-    fun fetchLanguageStats(language: String): JsonObject {
+    private fun fetchLanguageStats(language: String): JsonObject {
         val escapedLanguage = language.replace("+", "%2B")
         val url = URL.replace("{language}", escapedLanguage)
 
@@ -127,7 +122,7 @@ class GithubDataScraper(private val languages: List<String>) : DataScraper {
         return String.format("%,d", data.int("total_count"))
     }
 
-    fun fetchMoreThan1000StarsData(language: String): String {
+    private fun fetchMoreThan1000StarsData(language: String): String {
         val escapedLanguage = language.replace("+", "%2B")
         val urlStars = STARS_URL.replace("{language}", escapedLanguage)
         return Jsoup.connect(urlStars).header("Authorization", authToken).ignoreContentType(true).execute().body()

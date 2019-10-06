@@ -12,24 +12,18 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 
-
-const val WIKI_INFOBOX = "table.infobox tr"
+const val WIKI_INFO_BOX = "table.infobox tr"
 const val VERSION_HEADER = "Stable release"
 const val INDEX_OF_JAVA_TD_AT_PL_WIKI = 7
-const val INDEX_OF_R_TD = 7
 
-class LanguageVersionDataScraper(val languages: List<String>) : DataScraper {
+object LanguageVersionDataScraper : DataScraper {
 
-    companion object {
-        const val NAME = "LanguagesVersion"
-    }
-
-    override val name get() = NAME
+    override val name = "LanguagesVersion"
 
     private var data = ConcurrentHashMap<String, VersionData>()
     private lateinit var currentLanguage: String
 
-    override fun scrapData(): ConcurrentHashMap<String, VersionData> {
+    override fun scrapData(languages: List<String>): ConcurrentHashMap<String, VersionData> {
         StatusLogger.logCollecting("Languages version data")
 
         languages.stream().parallel()
@@ -56,7 +50,7 @@ class LanguageVersionDataScraper(val languages: List<String>) : DataScraper {
 
         try {
             val doc = Jsoup.connect(commonUrl).get()
-            var wikiTable = doc.select(WIKI_INFOBOX)
+            var wikiTable = doc.select(WIKI_INFO_BOX)
             wikiTable = wikiTable.next()
             val th = wikiTable.select("th").eachText()
             val td = wikiTable.select("td").eachText()

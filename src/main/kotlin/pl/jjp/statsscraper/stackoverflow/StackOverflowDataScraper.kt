@@ -2,7 +2,6 @@ package pl.jjp.statsscraper.stackoverflow
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
-import com.beust.klaxon.Status
 import org.jsoup.Jsoup
 import pl.jjp.statsscraper.common.DataScraper
 import pl.jjp.statsscraper.utils.StatusLogger
@@ -12,20 +11,14 @@ import java.util.concurrent.ConcurrentSkipListMap
 
 private const val URL = "https://api.stackexchange.com/2.2/tags/{language}/info?site=stackoverflow"
 
-class StackOverflowDataScraper(private val languages: List<String>) : DataScraper {
+object StackOverflowDataScraper : DataScraper {
 
-    companion object {
-        const val NAME = "StackOverFlow"
-    }
-
-    override val name get() = NAME
+    override val name = "StackOverFlow"
 
     private var data = ConcurrentHashMap<String, StackOverflowData>()
-
     private val rankingData = ConcurrentSkipListMap<Int, String>()
 
-
-    override fun scrapData(): ConcurrentHashMap<String, StackOverflowData> {
+    override fun scrapData(languages: List<String>): ConcurrentHashMap<String, StackOverflowData> {
         StatusLogger.logCollecting("Stack OverFlow data")
 
         languages.stream().parallel()
@@ -37,7 +30,6 @@ class StackOverflowDataScraper(private val languages: List<String>) : DataScrape
         }
 
         return data
-
     }
 
     private fun scrap(language: String): StackOverflowData {
@@ -65,7 +57,7 @@ class StackOverflowDataScraper(private val languages: List<String>) : DataScrape
         return languageData
     }
 
-    fun fetchData(language: String): String {
+    private fun fetchData(language: String): String {
         val escapedLanguage = language.replace("+", "%2B")
         val url = URL.replace("{language}", escapedLanguage)
         return Jsoup.connect(url).ignoreContentType(true).execute().body()

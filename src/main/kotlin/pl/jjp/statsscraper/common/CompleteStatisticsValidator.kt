@@ -1,8 +1,9 @@
 package pl.jjp.statsscraper.common
 
 import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
 import com.beust.klaxon.JsonObject
+import org.slf4j.LoggerFactory
 import pl.jjp.statsscraper.github.GithubData
 import pl.jjp.statsscraper.github.GithubDataScraper
 import pl.jjp.statsscraper.github.GithubDataValidator
@@ -19,10 +20,6 @@ import pl.jjp.statsscraper.tiobeindex.TiobeIndexData
 import pl.jjp.statsscraper.tiobeindex.TiobeIndexDataScraper
 import pl.jjp.statsscraper.tiobeindex.TiobeIndexDataValidator
 import pl.jjp.statsscraper.utils.StatusLogger
-import org.slf4j.LoggerFactory.getILoggerFactory
-import ch.qos.logback.classic.LoggerContext
-import org.slf4j.LoggerFactory
-import kotlin.math.log
 
 
 object CompleteStatisticsValidator {
@@ -56,13 +53,13 @@ object CompleteStatisticsValidator {
 
             try {
 
-                val maxRank = languages.size;
+                val maxRank = languages.size
 
                 scrapers.forEach {
-                    when(it) {
+                    when (it) {
 
                         is GithubDataScraper -> {
-                            val githubData = languageData[GithubDataScraper.NAME] as GithubData
+                            val githubData = languageData[GithubDataScraper.name] as GithubData
 
                             validator.validateNumber(githubData::ranking, 1, maxRank)
 
@@ -70,7 +67,7 @@ object CompleteStatisticsValidator {
                         }
 
                         is StackOverflowDataScraper -> {
-                            val stackOverflowData = languageData[StackOverflowDataScraper.NAME] as StackOverflowData
+                            val stackOverflowData = languageData[StackOverflowDataScraper.name] as StackOverflowData
 
                             validator.validateNumber(stackOverflowData::ranking, 1, maxRank)
 
@@ -78,24 +75,24 @@ object CompleteStatisticsValidator {
                         }
 
                         is MeetupDataScraper -> {
-                            val meetupData = languageData[MeetupDataScraper.NAME] as MeetupData
+                            val meetupData = languageData[MeetupDataScraper.name] as MeetupData
 
                             validator.validateNumber(meetupData.local::ranking, 1, maxRank)
                             validator.validateNumber(meetupData.global::ranking, 1, maxRank)
 
-                            MeetupDataValidator.validate(language, meetupData);
+                            MeetupDataValidator.validate(language, meetupData)
                         }
 
                         is SpectrumDataScraper -> {
-                            val spectrumData = languageData[SpectrumDataScraper.NAME] as SpectrumData
+                            val spectrumData = languageData[SpectrumDataScraper.name] as SpectrumData
 
-                            SpectrumDataValidator.validate(language, spectrumData);
+                            SpectrumDataValidator.validate(language, spectrumData)
                         }
 
                         is TiobeIndexDataScraper -> {
-                            val tiobeIndexData = languageData[TiobeIndexDataScraper.NAME] as TiobeIndexData
+                            val tiobeIndexData = languageData[TiobeIndexDataScraper.name] as TiobeIndexData
 
-                            TiobeIndexDataValidator.validate(language, tiobeIndexData);
+                            TiobeIndexDataValidator.validate(language, tiobeIndexData)
                         }
                     }
                 }

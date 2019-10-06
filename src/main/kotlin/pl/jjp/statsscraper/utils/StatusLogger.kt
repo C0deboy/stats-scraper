@@ -1,10 +1,12 @@
 package pl.jjp.statsscraper.utils
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import kotlin.system.exitProcess
 
 object StatusLogger {
-    val LOG = LoggerFactory.getLogger("Progress logger")
+    val LOG: Logger = LoggerFactory.getLogger("Progress logger")
 
     fun logInfo(message: String) {
         LOG.info(message)
@@ -57,7 +59,7 @@ object StatusLogger {
         MDC.put("error", " FAILURE")
         LOG.info(data)
         MDC.clear()
-        System.exit(1)
+        exitProcess(1)
     }
 
     fun logErrorFor(data: String, cause: String, exit: Boolean = true) {
@@ -67,12 +69,12 @@ object StatusLogger {
         MDC.clear()
 
         if (exit)
-            System.exit(1)
+            exitProcess(1)
     }
 
     fun logException(message: String, e: Exception) {
         LOG.error(message, e)
-        System.exit(1)
+        exitProcess(1)
     }
 
     fun appendWarning(cause: String) {

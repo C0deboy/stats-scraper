@@ -8,35 +8,31 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.HashMap
 
-class StatisticsBuilder(private val languages: List<String>, private val scrapers: Set<DataScraper>) {
+class StatisticsBuilder(private val scrapers: Set<DataScraper>) {
+
     private val statsForEachLanguage = JsonObject()
 
-    fun buildStatisticsForEachLanguage(): JsonObject {
+    fun buildStatisticsForEachLanguage(languages: List<String>): JsonObject {
         appendDateToStatistics()
 
         val statisticsSet = HashSet<HashMap<String, Map<String, Data>>>()
 
         for (scraper in scrapers) {
-
             val statistics = HashMap<String, Map<String, Data>>()
-            statistics[scraper.name] = scraper.scrapData()
-
+            statistics[scraper.name] = scraper.scrapData(languages)
             statisticsSet.add(statistics)
         }
 
         for (language in languages) {
-
             val languageData = JsonObject()
 
             for (statistics in statisticsSet) {
-
-                statistics.entries.forEach{ entry ->
+                statistics.entries.forEach { entry ->
                     languageData[entry.key] = entry.value[language]
                     statsForEachLanguage[language.replace("++", "pp")] = languageData
                 }
             }
         }
-
         return statsForEachLanguage
     }
 
