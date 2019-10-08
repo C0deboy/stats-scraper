@@ -5,7 +5,10 @@ import org.apache.commons.lang3.ArrayUtils
 import org.fusesource.jansi.AnsiConsole
 import pl.jjp.statsscraper.common.CompleteStatisticsValidator
 import pl.jjp.statsscraper.common.DataScraper
+import pl.jjp.statsscraper.github.GithubDataScraper
+import pl.jjp.statsscraper.meetup.MeetupDataScraper
 import pl.jjp.statsscraper.spectrum.SpectrumDataScraper
+import pl.jjp.statsscraper.stackoverflow.StackOverflowDataScraper
 import pl.jjp.statsscraper.tiobeindex.TiobeIndexDataScraper
 import pl.jjp.statsscraper.utils.FilePersister
 import pl.jjp.statsscraper.utils.StatisticsBuilder
@@ -27,10 +30,10 @@ fun main(args: Array<String>) {
     enableAnsiColors(args)
 
     scrapers.add(TiobeIndexDataScraper)
-//    scrapers.add(StackOverflowDataScraper)
+    scrapers.add(StackOverflowDataScraper)
     scrapers.add(SpectrumDataScraper)
-//    scrapers.add(GithubDataScraper)
-//    scrapers.add(MeetupDataScraper)
+    scrapers.add(GithubDataScraper)
+    scrapers.add(MeetupDataScraper)
 
     val elapsedTime = measureNanoTime {
         val statisticsBuilder = StatisticsBuilder(scrapers)

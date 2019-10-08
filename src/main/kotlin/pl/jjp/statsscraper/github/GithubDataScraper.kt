@@ -140,7 +140,6 @@ object GithubDataScraper : DataScraper {
     }
 
     private fun getPageBodyAsString(url: String): String {
-        Thread.sleep(1000)
         return Jsoup.connect(url)
             .header("Authorization", authToken)
             .ignoreContentType(true)
