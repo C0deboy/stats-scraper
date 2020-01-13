@@ -14,7 +14,6 @@ import java.util.regex.Pattern
 
 const val WIKI_INFO_BOX = "table.infobox tr"
 const val VERSION_HEADER = "Stable release"
-const val INDEX_OF_JAVA_TD_AT_PL_WIKI = 7
 
 object LanguageVersionDataScraper : DataScraper {
 
@@ -39,7 +38,6 @@ object LanguageVersionDataScraper : DataScraper {
         var commonUrl = "https://en.wikipedia.org/wiki/" + language + "_(programming_language)"
 
         val specificUrls = HashMap<String, String>()
-        specificUrls["Java"] = "https://pl.wikipedia.org/wiki/Java"
         specificUrls["JavaScript"] = "https://en.wikipedia.org/wiki/JavaScript"
         specificUrls["Csharp"] = "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)"
         specificUrls["C++"] = "https://en.wikipedia.org/wiki/C%2B%2B"
@@ -58,7 +56,6 @@ object LanguageVersionDataScraper : DataScraper {
             var index = th.indexOf(VERSION_HEADER)
 
             when (language) {
-                "Java" -> index = INDEX_OF_JAVA_TD_AT_PL_WIKI
                 "R" -> index += 1 // additional image row
             }
 
