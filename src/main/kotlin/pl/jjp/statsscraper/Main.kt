@@ -29,11 +29,21 @@ fun main(args: Array<String>) {
 
     enableAnsiColors(args)
 
-    scrapers.add(TiobeIndexDataScraper)
-    scrapers.add(StackOverflowDataScraper)
-    scrapers.add(SpectrumDataScraper)
-    scrapers.add(GithubDataScraper)
-    scrapers.add(MeetupDataScraper)
+    if (args.contains("--tiobe")) {
+        scrapers.add(TiobeIndexDataScraper)
+    }
+    if (args.contains("--stack")) {
+        scrapers.add(StackOverflowDataScraper)
+    }
+    if (args.contains("--spectrum")) {
+        scrapers.add(SpectrumDataScraper)
+    }
+    if (args.contains("--github")) {
+        scrapers.add(GithubDataScraper)
+    }
+    if (args.contains("--meetup")) {
+        scrapers.add(MeetupDataScraper)
+    }
 
     val elapsedTime = measureNanoTime {
         val statisticsBuilder = StatisticsBuilder(scrapers)
@@ -43,9 +53,11 @@ fun main(args: Array<String>) {
 
         FilePersister.saveStatisticsAndKeepOld(Klaxon().toJsonString(completeStatistics), "statistics.json")
 
-        val languagesVersions = LanguageVersionDataScraper.scrapData(languages)
+        if (args.contains("--versions")) {
+            val languagesVersions = LanguageVersionDataScraper.scrapData(languages)
 
-        FilePersister.saveToFile(Klaxon().toJsonString(languagesVersions), "languagesVersions.json")
+            FilePersister.saveToFile(Klaxon().toJsonString(languagesVersions), "languagesVersions.json")
+        }
     }
 
     val elapsedTimeInSeconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS)

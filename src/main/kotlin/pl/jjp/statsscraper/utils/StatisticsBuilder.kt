@@ -28,8 +28,16 @@ class StatisticsBuilder(private val scrapers: Set<DataScraper>) {
 
             for (statistics in statisticsSet) {
                 statistics.entries.forEach { entry ->
-                    languageData[entry.key] = entry.value[language]
-                    statsForEachLanguage[language.replace("++", "pp")] = languageData
+                    if (entry.key == "Github") {
+                        val data = entry.value[language];
+                        if (data != null) {
+                            languageData[entry.key] = data
+                            statsForEachLanguage[language.replace("++", "pp")] = languageData
+                        }
+                    } else {
+                        languageData[entry.key] = entry.value[language]
+                        statsForEachLanguage[language.replace("++", "pp")] = languageData
+                    }
                 }
             }
         }

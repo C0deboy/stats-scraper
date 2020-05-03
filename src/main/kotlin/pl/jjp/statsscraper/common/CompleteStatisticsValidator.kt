@@ -25,7 +25,7 @@ import pl.jjp.statsscraper.utils.StatusLogger
 object CompleteStatisticsValidator {
 
     fun validate(mergedStatistics: JsonObject, languages: List<String>, scrapers: Set<DataScraper>) {
-        if (mergedStatistics.size != languages.size + 1) {
+        if (mergedStatistics.size != languages.size + 1 && scrapers.size == 4) {
             StatusLogger.logError("Missing language or data.")
         }
 
@@ -59,6 +59,9 @@ object CompleteStatisticsValidator {
                     when (it) {
 
                         is GithubDataScraper -> {
+                            if (it.onlyForLanguages.contains(language)) {
+                                return;
+                            }
                             val githubData = languageData[GithubDataScraper.name] as GithubData
 
                             validator.validateNumber(githubData::ranking, 1, maxRank)
