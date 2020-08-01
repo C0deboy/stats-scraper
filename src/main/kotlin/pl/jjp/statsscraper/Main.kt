@@ -46,12 +46,14 @@ fun main(args: Array<String>) {
     }
 
     val elapsedTime = measureNanoTime {
-        val statisticsBuilder = StatisticsBuilder(scrapers)
+        if(scrapers.isNotEmpty()) {
+            val statisticsBuilder = StatisticsBuilder(scrapers)
 
-        val completeStatistics = statisticsBuilder.buildStatisticsForEachLanguage(languages)
-        CompleteStatisticsValidator.validate(completeStatistics, languages, scrapers)
+            val completeStatistics = statisticsBuilder.buildStatisticsForEachLanguage(languages)
+            CompleteStatisticsValidator.validate(completeStatistics, languages, scrapers)
 
-        FilePersister.saveStatisticsAndKeepOld(Klaxon().toJsonString(completeStatistics), "statistics.json")
+            FilePersister.saveStatisticsAndKeepOld(Klaxon().toJsonString(completeStatistics), "statistics.json")
+        }
 
         if (args.contains("--versions")) {
             val languagesVersions = LanguageVersionDataScraper.scrapData(languages)
