@@ -1,6 +1,8 @@
 package pl.jjp.statsscraper.versions
 
 import org.jsoup.Jsoup
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import pl.jjp.statsscraper.common.DataScraper
 import pl.jjp.statsscraper.utils.StatusLogger
 import java.time.LocalDate
@@ -107,34 +109,51 @@ object LanguageVersionDataScraper : DataScraper {
         if (matcher.find()) {
             releaseDate = matcher.group().replace("[()]".toRegex(), "")
         } else {
-            val fullDatePattern = Pattern.compile("\\d+ \\w+.+\\d{4}")
-            val fullDateMatcher = fullDatePattern.matcher(latestReleaseInfo)
+            val fullDateMatcher = Pattern.compile("\\(\\d+ \\w+.+\\d{4}\\)").matcher(latestReleaseInfo)
             if (fullDateMatcher.find()) {
-                releaseDate = fullDateMatcher.group()
-            } else {
+                releaseDate = fullDateMatcher.group().replace("[()]".toRegex(), "")
+            }
+            else {
                 StatusLogger.logErrorFor(currentLanguage, "Cannot retrieve date from release info.")
             }
         }
 
         try {
-            val fullDateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("pl"))
+            val fullDateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("en"))
             return try {
                 LocalDate.parse(releaseDate).format(fullDateFormatter)
             } catch (e: DateTimeParseException) {
-                LocalDate.parse(releaseDate, fullDateFormatter).format(fullDateFormatter)
+                return try {
+                    LocalDate.parse(releaseDate, fullDateFormatter).format(fullDateFormatter)
+                } catch (e: DateTimeParseException) {
+                    LocalDate.parse(releaseDate, fullDateFormatter).format(fullDateFormatter)
+                }
             }
 
         } catch (e: DateTimeParseException) {
-            val yearMonth = YearMonth.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM"))
-            var month = yearMonth.month.getDisplayName(TextStyle.FULL, Locale("pl"))
-            month = when (month) {
-                "listopada" -> "listopadzie"
-                "lutego" -> "lutym"
-                else -> month.substring(0, month.length - 1) + "u "
+            return try {
+                val yearMonth: YearMonth = try {
+                    YearMonth.parse(releaseDate, DateTimeFormatter.ofPattern("MM-yyyy"))
+                } catch (e: DateTimeParseException) {
+                    YearMonth.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM"))
+                }
+
+                var month = yearMonth.month.getDisplayName(TextStyle.FULL, Locale("pl"))
+                month = when (month) {
+                    "listopada" -> "listopadzie"
+                    "lutego" -> "lutym"
+                    else -> month.substring(0, month.length - 1) + "u "
+                }
+                val date = "w " + month + yearMonth.year
+                StatusLogger.appendWarning("Not full date, using: $date")
+                date
+            } catch (e: DateTimeParseException) {
+//                StatusLogger.logErrorFor(currentLanguage, "Cannot parse release date.")
+                val LOG: Logger = LoggerFactory.getLogger("Progress logger")
+                LOG.error(e.message, e)
+                "TODO";
             }
-            val date = "w " + month + yearMonth.year
-            StatusLogger.appendWarning("Not full date, using: $date")
-            return date
+
         }
 
     }
