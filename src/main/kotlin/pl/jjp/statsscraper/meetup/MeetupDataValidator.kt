@@ -23,7 +23,7 @@ object MeetupDataValidator {
 
             val globalRanking = languageData.global
 
-            validator.validateNumber(globalRanking::meetups, 50)
+            validator.validateNumber(globalRanking::meetups, 10)
             validator.validateNumber(globalRanking::members, 25000)
 
             StatusLogger.logSuccessFor(language)
