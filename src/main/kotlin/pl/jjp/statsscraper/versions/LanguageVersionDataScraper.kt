@@ -22,7 +22,7 @@ object LanguageVersionDataScraper : DataScraper {
     override val name = "LanguagesVersion"
 
     private var data = ConcurrentHashMap<String, VersionData>()
-    private lateinit var currentLanguage: String
+    lateinit var currentLanguage: String
 
     override fun scrapData(languages: List<String>): ConcurrentHashMap<String, VersionData> {
         StatusLogger.logCollecting("Languages version data")
@@ -101,7 +101,7 @@ object LanguageVersionDataScraper : DataScraper {
         return version
     }
 
-    private fun getDateFromReleaseInfo(latestReleaseInfo: String): String {
+    public fun getDateFromReleaseInfo(latestReleaseInfo: String): String {
         val datePattern = Pattern.compile("\\(\\d+-\\d+-?\\d*\\)")
         val matcher = datePattern.matcher(latestReleaseInfo)
         var releaseDate = ""
@@ -121,12 +121,14 @@ object LanguageVersionDataScraper : DataScraper {
         try {
             val fullDateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("en"))
             return try {
-                LocalDate.parse(releaseDate).format(fullDateFormatter)
+                LocalDate.parse(releaseDate).format(fullDateFormatter.withLocale(Locale("pl")))
             } catch (e: DateTimeParseException) {
                 return try {
-                    LocalDate.parse(releaseDate, fullDateFormatter).format(fullDateFormatter)
+                    LocalDate.parse(releaseDate, fullDateFormatter)
+                        .format(fullDateFormatter.withLocale(Locale("pl")))
                 } catch (e: DateTimeParseException) {
-                    LocalDate.parse(releaseDate, fullDateFormatter).format(fullDateFormatter)
+                    LocalDate.parse(releaseDate.split(';')[0], fullDateFormatter)
+                        .format(fullDateFormatter.withLocale(Locale("pl")))
                 }
             }
 
