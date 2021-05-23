@@ -109,7 +109,7 @@ object LanguageVersionDataScraper : DataScraper {
         if (matcher.find()) {
             releaseDate = matcher.group().replace("[()]".toRegex(), "")
         } else {
-            val fullDateMatcher = Pattern.compile("\\(\\d+ \\w+.+\\d{4}\\)").matcher(latestReleaseInfo)
+            val fullDateMatcher = Pattern.compile("\\([\\d\\w]+ [\\w\\d]+.+\\d{4}\\)").matcher(latestReleaseInfo)
             if (fullDateMatcher.find()) {
                 releaseDate = fullDateMatcher.group().replace("[()]".toRegex(), "")
             }
@@ -119,7 +119,7 @@ object LanguageVersionDataScraper : DataScraper {
         }
 
         try {
-            val fullDateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("en"))
+            var fullDateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("en"))
             return try {
                 LocalDate.parse(releaseDate).format(fullDateFormatter.withLocale(Locale("pl")))
             } catch (e: DateTimeParseException) {
@@ -127,8 +127,13 @@ object LanguageVersionDataScraper : DataScraper {
                     LocalDate.parse(releaseDate, fullDateFormatter)
                         .format(fullDateFormatter.withLocale(Locale("pl")))
                 } catch (e: DateTimeParseException) {
-                    LocalDate.parse(releaseDate.split(';')[0], fullDateFormatter)
-                        .format(fullDateFormatter.withLocale(Locale("pl")))
+                    return try {
+                        LocalDate.parse(releaseDate.split(';')[0], fullDateFormatter)
+                            .format(fullDateFormatter.withLocale(Locale("pl")))
+                    } catch (e: DateTimeParseException) {
+                        LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale("en")))
+                            .format(fullDateFormatter.withLocale(Locale("pl")))
+                    }
                 }
             }
 
