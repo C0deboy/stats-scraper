@@ -6,8 +6,8 @@ import pl.jjp.statsscraper.common.DataScraper
 import pl.jjp.statsscraper.utils.StatusLogger
 import pl.jjp.statsscraper.utils.escapeLanguage
 
-private const val LAST_YEAR_RANKING_FILE = "/spectrumRanking2018.html"
-private const val CURRENT_RANKING_FILE = "/spectrumRanking2019.html"
+private const val LAST_YEAR_RANKING_FILE = "/spectrumRanking2019.html"
+private const val CURRENT_RANKING_FILE = "/spectrumRanking2020.html"
 private const val RANK_DATA_LANGUAGE = ".language"
 
 object SpectrumDataScraper : DataScraper {

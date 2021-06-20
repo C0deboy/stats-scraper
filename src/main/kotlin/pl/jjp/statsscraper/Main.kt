@@ -1,5 +1,6 @@
 package pl.jjp.statsscraper
 
+import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import org.apache.commons.lang3.ArrayUtils
 import org.fusesource.jansi.AnsiConsole
@@ -47,10 +48,8 @@ fun main(args: Array<String>) {
 
     val elapsedTime = measureNanoTime {
         if(scrapers.isNotEmpty()) {
-            val statisticsBuilder = StatisticsBuilder(scrapers)
 
-            val completeStatistics = statisticsBuilder.buildStatisticsForEachLanguage(languages)
-            CompleteStatisticsValidator.validate(completeStatistics, languages, scrapers)
+            val completeStatistics = scrapAndValidateStatistics()
 
             FilePersister.saveStatisticsAndKeepOld(Klaxon().toJsonString(completeStatistics), "statistics.json")
         }
@@ -64,6 +63,19 @@ fun main(args: Array<String>) {
 
     val elapsedTimeInSeconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS)
     StatusLogger.logInfo("Done in $elapsedTimeInSeconds seconds.")
+}
+
+private fun scrapAndValidateStatistics(): JsonObject {
+
+    val completeStatistics = StatisticsBuilder(scrapers).buildStatisticsForEachLanguage(languages)
+
+    try {
+        CompleteStatisticsValidator.validate(completeStatistics, languages, scrapers)
+    } catch (e: Exception) {
+        StatusLogger.logException("Error: ${e.message}", e)
+    }
+
+    return completeStatistics
 }
 
 private fun enableAnsiColors(args: Array<String>) {

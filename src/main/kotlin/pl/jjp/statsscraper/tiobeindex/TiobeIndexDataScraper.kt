@@ -8,7 +8,7 @@ private const val URL = "https://www.tiobe.com/tiobe-index/"
 private const val TABLE_TOP20_ROWS = ".table"
 private const val LAST_YEAR_POSITION_TD = "td:nth-child(2)"
 private const val CURRENT_YEAR_POSITION_TD = "td:nth-child(1)"
-private const val LANGUAGE_TD = "td:nth-child(4)"
+private const val LANGUAGE_TD = "td:nth-child(5)"
 private const val REMAINING_LANGUAGE_TD = "td:nth-child(2)"
 
 object TiobeIndexDataScraper : DataScraper {
