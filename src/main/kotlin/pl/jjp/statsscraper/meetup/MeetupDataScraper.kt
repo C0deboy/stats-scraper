@@ -27,7 +27,7 @@ object MeetupDataScraper : DataScraper {
     init {
         customTopics["R"] = "programming-in-r"
         customTopics["Swift"] = "swift-language"
-        customTopics["Go"] = "go-programming-language"
+        customTopics["Go"] = "golang"
     }
 
     override fun scrapData(languages: List<String>): Map<String, MeetupData> {

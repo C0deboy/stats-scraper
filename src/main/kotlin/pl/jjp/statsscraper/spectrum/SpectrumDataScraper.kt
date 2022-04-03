@@ -6,8 +6,8 @@ import pl.jjp.statsscraper.common.DataScraper
 import pl.jjp.statsscraper.utils.StatusLogger
 import pl.jjp.statsscraper.utils.escapeLanguage
 
-private const val LAST_YEAR_RANKING_FILE = "/spectrumRanking2019.html"
-private const val CURRENT_RANKING_FILE = "/spectrumRanking2020.html"
+private const val LAST_YEAR_RANKING_FILE = "/spectrumRanking2020.html"
+private const val CURRENT_RANKING_FILE = "/spectrumRanking2021.html"
 private const val RANK_DATA_LANGUAGE = ".language"
 
 object SpectrumDataScraper : DataScraper {
@@ -28,9 +28,10 @@ object SpectrumDataScraper : DataScraper {
 
                 if (currentSpectrumRanking.find { it.contains(language) } != null) {
 
-                    val currentPosition = index + 1
                     val find = lastYearSpectrumRanking.find { it.contains(language) }
-                    val lastYearPosition = if (find != null) lastYearSpectrumRanking.indexOf(find) + 1 else 0
+                    val currentPosition = currentSpectrumRanking.indexOf(find) + 1
+                    val find2 = lastYearSpectrumRanking.find { it.contains(language) }
+                    val lastYearPosition = if (find2 != null) lastYearSpectrumRanking.indexOf(find2) + 1 else 0
 
                     val languageData = SpectrumData(
                         currentPosition = currentPosition.toString(),

@@ -17,7 +17,7 @@ object MeetupDataValidator {
             val localRanking = languageData.local
 
 
-            validator.validateNumber(localRanking::meetups, 2)
+            validator.validateNumber(localRanking::meetups, 1)
             validator.validateNumber(localRanking::members, 500)
 //            validator.validateNumber(localRanking::ranking, 1)
 

@@ -11,10 +11,10 @@ object SpectrumDataValidator {
             val validator = DataValidator(language)
 
             if (languageData.currentPosition != "N/A")
-                validator.validateNumber(languageData::currentPosition, 1, 40)
+                validator.validateNumber(languageData::currentPosition, 1, 50)
 
             if (languageData.lastYearPosition != "N/A")
-                validator.validateNumber(languageData::lastYearPosition, 1, 40)
+                validator.validateNumber(languageData::lastYearPosition, 1, 50)
 
 
             StatusLogger.logSuccessFor(language)
