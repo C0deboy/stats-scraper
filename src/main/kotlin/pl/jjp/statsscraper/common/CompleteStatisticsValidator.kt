@@ -93,7 +93,14 @@ object CompleteStatisticsValidator {
                         }
 
                         is TiobeIndexDataScraper -> {
-                            val tiobeIndexData = languageData[TiobeIndexDataScraper.name] as TiobeIndexData
+                            var tiobeIndexData: TiobeIndexData;
+
+                            try {
+                                tiobeIndexData = languageData[TiobeIndexDataScraper.name] as TiobeIndexData
+                            } catch (e: Exception) {
+                                languageData[TiobeIndexDataScraper.name] = TiobeIndexData("50+", "N/A");
+                                return
+                            }
 
                             TiobeIndexDataValidator.validate(language, tiobeIndexData)
                         }
