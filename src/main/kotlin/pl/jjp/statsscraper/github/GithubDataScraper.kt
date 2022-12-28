@@ -61,8 +61,8 @@ object GithubDataScraper : DataScraper {
             return data
         }
 
-        filteredLanguages.stream().parallel()
-            .forEach { lang -> data[lang] = scrap(lang) }
+        filteredLanguages.stream()
+            .forEach { lang -> data[lang] = scrap(lang, true) }
 
         var ranking = rankingData.size
         for (language in rankingData.values) {
@@ -72,7 +72,7 @@ object GithubDataScraper : DataScraper {
         return data
     }
 
-    private fun scrap(language: String): GithubData {
+    private fun scrap(language: String, firstTry: Boolean): GithubData {
 
         lateinit var languageData: GithubData
 
@@ -88,8 +88,14 @@ object GithubDataScraper : DataScraper {
             GithubDataValidator.validate(language, languageData)
 
         } catch (e: Exception) {
-            checkGithubApiLimits()
-            StatusLogger.logException(language, e)
+            if (firstTry) {
+                StatusLogger.logInfo("Github API limit. Waiting 1 min")
+                Thread.sleep(60000)//1min
+                return scrap(language, false)
+            } else {
+                checkGithubApiLimits()
+                StatusLogger.logException(language, e)
+            }
         }
 
         return languageData
