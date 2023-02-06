@@ -14,11 +14,10 @@ import java.util.concurrent.ConcurrentSkipListMap
 import kotlin.streams.toList
 
 
-private const val URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>0&s=stars&per_page=20"
-private const val STARS_URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>1000&per_page=1"
+private const val PROJECTS_COUNT_URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>0&per_page=1"
+private const val RELEVANT_PROJECTS_URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>1000&sort=stars&order=desc&per_page=20"
 
 object GithubDataScraper : DataScraper {
-
 
     override val name = "Github"
 
@@ -80,8 +79,8 @@ object GithubDataScraper : DataScraper {
             val json = fetchLanguageStats(language)
 
             languageData = GithubData(
-                moreThen1000Stars = scrapMoreThan1000Stars(language),
-                projects = scrapProjectsTotalCount(json, language),
+                moreThen1000Stars = scrapProjectsCountWithMoreThan1000Stars(json),
+                projects = scrapProjectsTotalCount(language),
                 top10 = scrapTop10Data(json)
             )
 
@@ -103,15 +102,18 @@ object GithubDataScraper : DataScraper {
 
     private fun fetchLanguageStats(language: String): JsonObject {
         val escapedLanguage = language.replace("+", "%2B")
-        val url = URL.replace("{language}", escapedLanguage)
+            .replace("JavaScript", "javascript+language:typescript")
+        val url = RELEVANT_PROJECTS_URL.replace("{language}", escapedLanguage)
 
         val doc = getPageBodyAsString(url)
 
         return Klaxon().parseJsonObject(StringReader(doc))
     }
 
-    private fun scrapProjectsTotalCount(json: JsonObject, language: String): String {
-        val count = json.int("total_count")!!
+    private fun scrapProjectsTotalCount(language: String): String {
+        val doc = fetchProjectsTotalCountData(language)
+        val data = Klaxon().parseJsonObject(StringReader(doc))
+        val count = data.int("total_count")!!
         rankingData[count] = language
         return String.format("%,d", count)
     }
@@ -148,15 +150,14 @@ object GithubDataScraper : DataScraper {
         return top10
     }
 
-    private fun scrapMoreThan1000Stars(language: String): String {
-        val doc = fetchMoreThan1000StarsData(language)
-        val data = Klaxon().parseJsonObject(StringReader(doc))
-        return String.format("%,d", data.int("total_count"))
+    private fun scrapProjectsCountWithMoreThan1000Stars(json: JsonObject): String {
+        return String.format("%,d", json.int("total_count"))
     }
 
-    private fun fetchMoreThan1000StarsData(language: String): String {
+    private fun fetchProjectsTotalCountData(language: String): String {
         val escapedLanguage = language.replace("+", "%2B")
-        val urlStars = STARS_URL.replace("{language}", escapedLanguage)
+            .replace("JavaScript", "javascript+language:typescript")
+        val urlStars = PROJECTS_COUNT_URL.replace("{language}", escapedLanguage)
         return getPageBodyAsString(urlStars)
     }
 

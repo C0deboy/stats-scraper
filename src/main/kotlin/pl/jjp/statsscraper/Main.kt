@@ -36,9 +36,6 @@ fun main(args: Array<String>) {
     if (args.contains("--stack")) {
         scrapers.add(StackOverflowDataScraper)
     }
-    if (args.contains("--spectrum")) {
-        scrapers.add(SpectrumDataScraper)
-    }
     if (args.contains("--github")) {
         scrapers.add(GithubDataScraper)
     }

@@ -1,8 +1,6 @@
 package pl.jjp.statsscraper.versions
 
 import org.jsoup.Jsoup
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import pl.jjp.statsscraper.common.DataScraper
 import pl.jjp.statsscraper.utils.StatusLogger
 import java.time.LocalDate
@@ -12,6 +10,7 @@ import java.time.format.DateTimeParseException
 import java.time.format.TextStyle
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 const val WIKI_INFO_BOX = "table.infobox tr"
@@ -43,6 +42,7 @@ object LanguageVersionDataScraper : DataScraper {
         specificUrls["JavaScript"] = "https://en.wikipedia.org/wiki/JavaScript"
         specificUrls["Csharp"] = "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)"
         specificUrls["C++"] = "https://en.wikipedia.org/wiki/C%2B%2B"
+        specificUrls["Groovy"] = "https://en.wikipedia.org/wiki/Apache_Groovy"
 
         if (language in specificUrls) {
             commonUrl = specificUrls.getValue(language)
@@ -71,7 +71,9 @@ object LanguageVersionDataScraper : DataScraper {
                 version = version
             )
 
-            StatusLogger.logSuccessFor(language)
+            if (releaseDate == "TODO") StatusLogger.logInfoTodo(language)
+            else StatusLogger.logSuccessFor(language)
+
 
         } catch (e: Exception) {
             StatusLogger.logException(currentLanguage, e)
@@ -101,20 +103,22 @@ object LanguageVersionDataScraper : DataScraper {
         return version
     }
 
-    public fun getDateFromReleaseInfo(latestReleaseInfo: String): String {
-        val datePattern = Pattern.compile("\\(\\d+-\\d+-?\\d*\\)")
+    fun getDateFromReleaseInfo(latestReleaseInfo: String): String {
+        val datePattern = Pattern.compile("\\d+-\\d+-?\\d*")
         val matcher = datePattern.matcher(latestReleaseInfo)
         var releaseDate = ""
+        val releaseInfo = latestReleaseInfo.replace("(12th edition)", "")
+            .replace("\\[\\d+]".toRegex(), "")
 
         if (matcher.find()) {
             releaseDate = matcher.group().replace("[()]".toRegex(), "")
         } else {
-            val fullDateMatcher = Pattern.compile("\\([\\d\\w]+ [\\w\\d]+.+\\d{4}\\)").matcher(latestReleaseInfo)
+            val fullDateMatcher = Pattern.compile("\\([\\d\\w]+ [\\w\\d]+.+\\d{4}\\)").matcher(releaseInfo)
             if (fullDateMatcher.find()) {
                 releaseDate = fullDateMatcher.group().replace("[()]".toRegex(), "")
             }
             else {
-                StatusLogger.logErrorFor(currentLanguage, "Cannot retrieve date from release info.")
+//                StatusLogger.logErrorFor(currentLanguage, "Cannot retrieve date from release info ($latestReleaseInfo)");
             }
         }
 
@@ -154,11 +158,8 @@ object LanguageVersionDataScraper : DataScraper {
                 val date = "w " + month + yearMonth.year
                 StatusLogger.appendWarning("Not full date, using: $date")
                 date
-            } catch (e: DateTimeParseException) {
-//                StatusLogger.logErrorFor(currentLanguage, "Cannot parse release date.")
-                val LOG: Logger = LoggerFactory.getLogger("Progress logger")
-                LOG.error(e.message, e)
-                "TODO";
+            } catch (e: Exception) {
+                "TODO"
             }
 
         }

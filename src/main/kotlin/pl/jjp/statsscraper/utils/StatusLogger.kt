@@ -23,6 +23,12 @@ object StatusLogger {
         MDC.clear()
     }
 
+    fun logInfoTodo(language: String) {
+        MDC.put("status", "TODO   ")
+        LOG.info(language)
+        MDC.clear()
+    }
+
     fun logSuccessFor(language: String) {
         MDC.put("status", "SUCCESS")
         LOG.info(language)
