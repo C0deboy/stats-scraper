@@ -1,6 +1,7 @@
 package pl.jjp.statsscraper.versions
 
 import org.jsoup.Jsoup
+import org.jsoup.select.Elements
 import pl.jjp.statsscraper.common.DataScraper
 import pl.jjp.statsscraper.utils.StatusLogger
 import java.time.LocalDate
@@ -52,16 +53,12 @@ object LanguageVersionDataScraper : DataScraper {
             val doc = Jsoup.connect(commonUrl).get()
             var wikiTable = doc.select(WIKI_INFO_BOX)
             wikiTable = wikiTable.next()
-            val th = wikiTable.select("th").eachText()
-            val td = wikiTable.select("td").eachText()
+            val th = wikiTable.select("th")
+            val thTexts = th.eachText()
 
-            var index = th.indexOf(VERSION_HEADER)
+            val index = thTexts.indexOf(VERSION_HEADER)
 
-            when (language) {
-                "R" -> index += 1 // additional image row
-            }
-
-            val latestReleaseInfo = if (index == -1) "TODO" else td[index]
+            val latestReleaseInfo = if (index == -1) "TODO" else nextTd(th, index) ?: "TODO"
             val releaseDate = getDateFromReleaseInfo(latestReleaseInfo)
             val version = getVersionFromReleaseInfo(latestReleaseInfo)
 
@@ -74,13 +71,14 @@ object LanguageVersionDataScraper : DataScraper {
             if (releaseDate == "TODO") StatusLogger.logInfoTodo(language)
             else StatusLogger.logSuccessFor(language)
 
-
         } catch (e: Exception) {
             StatusLogger.logException(currentLanguage, e)
         }
 
         return languageData
     }
+
+    private fun nextTd(th: Elements, index: Int) = th[index].parent()?.select("td")?.text()
 
     private fun getVersionFromReleaseInfo(latestReleaseInfo: String): String {
         val versionPattern = Pattern.compile("\\d+\\.\\d+(\\.\\d+)?")
