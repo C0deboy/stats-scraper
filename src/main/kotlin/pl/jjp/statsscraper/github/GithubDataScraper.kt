@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentSkipListMap
 import kotlin.streams.toList
 
 
-private const val PROJECTS_COUNT_URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>0&per_page=1"
-private const val RELEVANT_PROJECTS_URL = "https://api.github.com/search/repositories?q=language:{language}+stars:>1000&sort=stars&order=desc&per_page=20"
+private const val PROJECTS_COUNT_URL = "https://api.github.com/search/repositories?q=language%3A{language}+stars%3A%3E0&per_page=1"
+private const val RELEVANT_PROJECTS_URL = "https://api.github.com/search/repositories?q=language%3A{language}+stars%3A%3E1000&sort=stars&order=desc&per_page=20"
 
 object GithubDataScraper : DataScraper {
 
@@ -88,7 +88,8 @@ object GithubDataScraper : DataScraper {
 
         } catch (e: Exception) {
             if (firstTry) {
-                StatusLogger.logInfo("Github API limit. Waiting 1 min")
+                StatusLogger.logInfo("Possible Github API limit. Waiting 1 min")
+                StatusLogger.logException(language, e)
                 Thread.sleep(60000)//1min
                 return scrap(language, false)
             } else {

@@ -28,6 +28,7 @@ object MeetupDataScraper : DataScraper {
         customTopics["R"] = "programming-in-r"
         customTopics["Swift"] = "swift-language"
         customTopics["Go"] = "golang"
+        customTopics["JavaScript"] = "javascript/pl"
     }
 
     override fun scrapData(languages: List<String>): Map<String, MeetupData> {
@@ -58,8 +59,8 @@ object MeetupDataScraper : DataScraper {
 
         val topic = customTopics.getOrDefault(language, language)
 
-        val localUrl = url + topic.toLowerCase()
-        val globalUrl = "$localUrl/global/"
+        val globalUrl = url + topic.toLowerCase()
+        val localUrl = if (topic.endsWith("/pl")) globalUrl else "$globalUrl/pl"
 
         lateinit var languageData: MeetupData
 
@@ -116,12 +117,14 @@ object MeetupDataScraper : DataScraper {
     }
 
     private fun getMeetupsCount(doc: Document): Int {
-        val meetups = doc.select(".bounds").first().select(".text--bold:matches([\\d,])")[1]
+        val select = doc.select("main button")
+        val meetups = select.first().parent().select(".font-medium:matches([\\d,])")[1]
         return scrapNumber(meetups)
     }
 
     private fun getMembersCount(doc: Document): Int {
-        val members = doc.select(".bounds").first().select(".text--bold:matches([\\d,])")[0]
+        val select = doc.select("main button")
+        val members = select.first().parent().select(".font-medium:matches([\\d,])")[0]
         return scrapNumber(members)
     }
 

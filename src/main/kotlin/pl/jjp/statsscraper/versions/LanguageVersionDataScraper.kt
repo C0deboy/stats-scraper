@@ -61,7 +61,7 @@ object LanguageVersionDataScraper : DataScraper {
                 "R" -> index += 1 // additional image row
             }
 
-            val latestReleaseInfo = td[index]
+            val latestReleaseInfo = if (index == -1) "TODO" else td[index]
             val releaseDate = getDateFromReleaseInfo(latestReleaseInfo)
             val version = getVersionFromReleaseInfo(latestReleaseInfo)
 

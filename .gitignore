@@ -131,3 +131,4 @@ languagesVersions.json
 statistics*.json
 src/test/statistics/*.json
 .idea/google-java-format.xml
+.idea/material_theme_project_new.xml
